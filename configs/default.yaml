@@ -1,0 +1,105 @@
+project:
+  seed: 42
+  output_root: ../artifacts
+  logging:
+    config: ./logging.yaml
+    level: INFO
+
+pipeline:
+  stages:
+    - split
+    - train
+    - tune
+    - stability
+
+data:
+  root_dir: ../input_train_and_test_json
+  train_file: train_set_20250919_181918.json
+  test_file: test_set_20250919_181918.json
+  text_field: text
+  primary_field: primary
+  secondary_field: secondary
+  split:
+    enabled: false
+    input_path: ../data/raw/labeled_reviews.json
+    output_root: ../input_train_and_test_json
+    train_template: train_set_{timestamp}.json
+    test_template: test_set_{timestamp}.json
+    test_size: 0.2
+    stratify_key: primary
+    random_seed: 42
+    timestamp_format: "%Y%m%d_%H%M%S"
+
+labels:
+  primary: [BUG, UI/UX, FEATURE_REQUEST, PERFORMANCE, POSITIVE, INVALID]
+  secondary: [ACCOUNT, TRANSACTION, CREDIT_CARD, GENERAL]
+
+training:
+  enabled: false
+  model_name: IDEA-CCNL/Erlangshen-DeBERTa-v2-320M-Chinese
+  output_subdir: training
+  max_length: 256
+  epochs: 6
+  batch_size: 4
+  eval_batch_size: 4
+  learning_rate: 2e-5
+  dropout: 0.1
+  alpha: 1.0
+  beta: 1.0
+  use_focal: false
+  focal_gamma: 1.5
+  weight_primary: true
+  weight_secondary: true
+  weighted_sampler: true
+  fp16_auto: true
+  evaluation:
+    save_metrics: true
+    save_confusion: true
+    save_predictions: true
+    save_label_map: true
+    generate_visuals: true
+
+tuning:
+  enabled: true
+  trials: 50
+  output_subdir: tuning
+  direction: maximize
+  search_space:
+    learning_rate:
+      distribution: loguniform
+      low: 5e-6
+      high: 3e-5
+    batch_size:
+      distribution: categorical
+      choices: [2, 4]
+    eval_batch_size:
+      distribution: categorical
+      choices: [4, 8]
+    max_length:
+      distribution: categorical
+      choices: [128, 192, 256]
+    dropout:
+      distribution: uniform
+      low: 0.1
+      high: 0.3
+    alpha:
+      distribution: uniform
+      low: 0.8
+      high: 1.2
+    beta:
+      distribution: uniform
+      low: 0.8
+      high: 1.5
+    use_focal:
+      distribution: categorical
+      choices: [false, true]
+    focal_gamma:
+      distribution: uniform
+      low: 1.0
+      high: 2.0
+
+stability:
+  enabled: false
+  runs: 3
+  output_subdir: stability
+  base_seed: 42

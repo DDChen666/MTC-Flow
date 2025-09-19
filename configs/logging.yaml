@@ -1,0 +1,29 @@
+﻿# Logging config consumed by logging.config.dictConfig
+version: 1
+formatters:
+  standard:
+    format: "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+  file:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: standard
+    filename: artifacts/pipeline.log
+loggers:
+  "":
+    handlers: [console, file]
+    level: INFO
+    propagate: false
+  pipeline:
+    handlers: [console, file]
+    level: INFO
+    propagate: false
+  src:
+    handlers: [console, file]
+    level: INFO
+    propagate: false

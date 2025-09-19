@@ -1,0 +1,32 @@
+﻿# Python caches & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Local data & artifacts
+artifacts/
+input_train_and_test_json/
+outputs/
+logs/
+
+# Tooling
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+
+# Editors & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Packaging artifacts
+*.egg-info/
+
