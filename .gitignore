@@ -30,3 +30,6 @@ Thumbs.db
 # Packaging artifacts
 *.egg-info/
 
+
+# Test configs
+configs/default1.0_BEST_trial_042.yaml
